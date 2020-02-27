@@ -17,6 +17,7 @@ defmodule ImageHubWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    resources "/users", ImageHubWeb.UserController
   end
 
   # Other scopes may use custom stacks.
