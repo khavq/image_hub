@@ -7,6 +7,10 @@
 # General application configuration
 use Mix.Config
 
+config :image_hub, ImageHub.Accounts.Guardian,
+  issuer: "image_hub",
+  secret_key: "5UoIdzIpahurRThZZ0IDuAnv8GJ1X1YvG2UnJD4SWfDCwFRnK3IVAaz/XsefmpnY"
+
 config :image_hub,
   ecto_repos: [ImageHub.Repo]
 

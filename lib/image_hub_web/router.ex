@@ -1,6 +1,14 @@
 defmodule ImageHubWeb.Router do
   use ImageHubWeb, :router
 
+  pipeline :auth do
+    plug ImageHub.Accounts.Pipeline
+  end
+
+  pipeline :ensure_auth do
+    plug Guardian.Plug.EnsureAuthenticated
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,10 +22,22 @@ defmodule ImageHubWeb.Router do
   end
 
   scope "/", ImageHubWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     get "/", PageController, :index
-    resources "/users", ImageHubWeb.UserController
+
+
+    # session
+    get  "/login",  SessionController, :new
+    get  "/logout", SessionController, :logout
+    post "/login",  SessionController, :login
+  end
+
+  scope "/", ImageHubWeb do
+    pipe_through [:browser, :auth, :ensure_auth]
+
+    get "/protected", PageController, :protected
+    resources "/users", UserController
   end
 
   # Other scopes may use custom stacks.
