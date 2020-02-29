@@ -1,50 +1,52 @@
-FROM elixir:1.9.0-alpine as build
+# ---- Build Stage ----
+FROM elixir:alpine AS app_builder
 
-# install build dependencies
-RUN apk add --update git build-base nodejs yarn python
+# Set environment variables for building the application
+ENV MIX_ENV=prod \
+    TEST=1 \
+    LANG=C.UTF-8
 
-# prepare build dir
-RUN mkdir /app
-WORKDIR /app
+RUN apk add --update git && \
+    rm -rf /var/cache/apk/*
 
-# install hex + rebar
+# Install hex and rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# set build ENV
-ENV MIX_ENV=prod
-ENV DATABASE_URL=ecto://postgres:postgres@localhost:5432/image_hub_pro
-ENV SECRET_KEY_BASE=EFp87J/5mtQ1U1eDei/aO7M0n981BkvJJ249ba/QBVxKiwLOd4fRyynanIzEm/4R
-
-# install mix dependencies
-COPY mix.exs mix.lock ./
-COPY config config
-RUN mix deps.get
-RUN mix deps.compile
-
-# build assets
-COPY assets assets
-COPY priv priv
-RUN cd assets && yarn install && yarn run deploy
-RUN mix phx.digest
-
-# build project
-COPY lib lib
-RUN mix compile
-
-# build release (uncomment COPY if rel/ exists)
-# COPY rel rel
-RUN mix release
-
-# prepare release image
-FROM alpine:3.9 AS app
-RUN apk add --update bash openssl
-
+# Create the application build directory
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=build /app/_build/prod/rel/image_hub ./
-RUN chown -R nobody: /app
-USER nobody
+# Copy over all the necessary application files and directories
+COPY config ./config
+COPY lib ./lib
+COPY priv ./priv
+COPY mix.exs .
+COPY mix.lock .
 
-ENV HOME=/app
+# Fetch the application dependencies and build the application
+RUN mix deps.get
+RUN mix deps.compile
+RUN mix phx.digest
+RUN mix release
+
+# ---- Application Stage ----
+FROM alpine AS app
+
+ENV LANG=C.UTF-8
+
+# Install openssl
+RUN apk add --update openssl ncurses-libs postgresql-client && \
+    rm -rf /var/cache/apk/*
+
+# Copy over the build artifact from the previous step and create a non root user
+RUN adduser -D -h /home/app app
+WORKDIR /home/app
+COPY --from=app_builder /app/_build .
+RUN chown -R app: ./prod
+USER app
+
+COPY entrypoint.sh .
+
+# Run the Phoenix app
+CMD ["./entrypoint.sh"]

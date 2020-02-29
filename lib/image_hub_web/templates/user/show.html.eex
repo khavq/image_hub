@@ -3,6 +3,11 @@
 <ul>
 
   <li>
+    <strong>Avatar:</strong>
+    <img class="img img-round" src=<%= @user.avatar_url %> />
+  </li>
+
+  <li>
     <strong>Email:</strong>
     <%= @user.email %>
   </li>

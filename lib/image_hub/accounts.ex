@@ -5,8 +5,8 @@ defmodule ImageHub.Accounts do
 
   import Ecto.Query, warn: false
   alias ImageHub.Repo
-
   alias ImageHub.Accounts.User
+  alias Argon2
 
   @doc """
   Returns the list of users.
@@ -100,5 +100,128 @@ defmodule ImageHub.Accounts do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  alias ImageHub.Accounts.Credential
+
+  @doc """
+  Returns the list of credentials.
+
+  ## Examples
+
+      iex> list_credentials()
+      [%Credential{}, ...]
+
+  """
+  def list_credentials do
+    Repo.all(Credential)
+  end
+
+  @doc """
+  Gets a single credential.
+
+  Raises `Ecto.NoResultsError` if the Credential does not exist.
+
+  ## Examples
+
+      iex> get_credential!(123)
+      %Credential{}
+
+      iex> get_credential!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_credential!(id), do: Repo.get!(Credential, id)
+
+  @doc """
+  Creates a credential.
+
+  ## Examples
+
+      iex> create_credential(%{field: value})
+      {:ok, %Credential{}}
+
+      iex> create_credential(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_credential(attrs \\ %{}) do
+    %Credential{}
+    |> Credential.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a credential.
+
+  ## Examples
+
+      iex> update_credential(credential, %{field: new_value})
+      {:ok, %Credential{}}
+
+      iex> update_credential(credential, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_credential(%Credential{} = credential, attrs) do
+    credential
+    |> Credential.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a credential.
+
+  ## Examples
+
+      iex> delete_credential(credential)
+      {:ok, %Credential{}}
+
+      iex> delete_credential(credential)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_credential(%Credential{} = credential) do
+    Repo.delete(credential)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking credential changes.
+
+  ## Examples
+
+      iex> change_credential(credential)
+      %Ecto.Changeset{source: %Credential{}}
+
+  """
+  def change_credential(%Credential{} = credential) do
+    Credential.changeset(credential, %{})
+  end
+
+  def authenticate_by_email_password(email, _password) do
+    query =
+      from u in User,
+      inner_join: c in assoc(u, :credential),
+      where: c.email == ^email
+
+    case Repo.one(query) do
+      %User{} = user -> {:ok, user}
+      nil -> {:error, :unauthorized}
+    end
+  end
+
+  def authenticate_user(email, plain_text_password) do
+    query = from u in User, where: u.email == ^email
+    case Repo.one(query) do
+      nil ->
+        Argon2.no_user_verify()
+        {:error, :invalid_credentials}
+      user ->
+        if Argon2.verify_pass(plain_text_password, user.password) do
+          {:ok, user}
+        else
+          {:error, :invalid_credentials}
+        end
+    end
   end
 end

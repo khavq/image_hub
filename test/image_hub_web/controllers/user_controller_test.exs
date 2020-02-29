@@ -3,7 +3,7 @@ defmodule ImageHubWeb.UserControllerTest do
 
   alias ImageHub.Accounts
 
-  @create_attrs %{avatar_url: "some avatar_url", email: "some email", name: "some name", phone_number: "some phone_number"}
+  @create_attrs %{password: "some password", avatar_url: "some avatar_url", email: "some email", name: "some name", phone_number: "some phone_number"}
   @update_attrs %{avatar_url: "some updated avatar_url", email: "some updated email", name: "some updated name", phone_number: "some updated phone_number"}
   @invalid_attrs %{avatar_url: nil, email: nil, name: nil, phone_number: nil}
 
