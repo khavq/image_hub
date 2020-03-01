@@ -4,7 +4,7 @@ defmodule ImageHubWeb.SessionController do
   alias ImageHub.{Accounts, Accounts.User, Accounts.Guardian}
 
   def new(conn, _) do
-    changeset = Accounts.change_user(%User{})
+    changeset = Accounts.change_user(%User{email: conn.params["user"]["email"], password: conn.params["user"]["password"]})
     maybe_user = Guardian.Plug.current_resource(conn)
 
     if maybe_user do

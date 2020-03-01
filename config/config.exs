@@ -7,9 +7,21 @@
 # General application configuration
 use Mix.Config
 
+config :ueberauth, Ueberauth,
+  providers: [ google: {Ueberauth.Strategy.Google, []} ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  #client_id: System.get_env("GOOGLE_CLIENT_ID"),
+  #client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
+  #redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
+
+  client_id: {System, :get_env, ["UEBERAUTH_GOOGLE_CLIENT_ID"]},
+  client_secret: {System, :get_env, ["UEBERAUTH_GOOGLE_CLIENT_SECRET"]},
+  redirect_uri: {System, :get_env, ["UEBERAUTH_GOOGLE_REDIRECT_URI"]}
+
 config :image_hub, ImageHub.Accounts.Guardian,
   issuer: "image_hub",
-  secret_key: "5UoIdzIpahurRThZZ0IDuAnv8GJ1X1YvG2UnJD4SWfDCwFRnK3IVAaz/XsefmpnY"
+  secret_key: {System, :get_env, ["GUARDIAN_SECRET_KEY"]}
 
 config :image_hub,
   ecto_repos: [ImageHub.Repo]

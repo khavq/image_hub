@@ -7,4 +7,5 @@ defmodule ImageHub.Accounts.Pipeline do
   plug Guardian.Plug.VerifySession, claims: %{"typ" => "access"}
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
   plug Guardian.Plug.LoadResource, allow_blank: true
+  plug ImageHub.Accounts.CurrentUser
 end
