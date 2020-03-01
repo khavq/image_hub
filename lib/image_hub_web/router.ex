@@ -21,6 +21,15 @@ defmodule ImageHubWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/auth", ImageHubWeb do
+    pipe_through([:browser])
+
+    get("/:provider", AuthController, :request)
+    get("/:provider/callback", AuthController, :callback)
+    post("/:provider/callback", AuthController, :callback)
+    post("/logout", AuthController, :delete)
+  end
+
   scope "/", ImageHubWeb do
     pipe_through [:browser, :auth]
 

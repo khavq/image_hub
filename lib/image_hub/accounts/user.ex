@@ -10,6 +10,8 @@ defmodule ImageHub.Accounts.User do
     field :name, :string
     field :phone_number, :string
     field :password, :string
+    field :auth_id, :string
+    field :auth_provider, :string
     has_one :credential, Credential
 
     timestamps()
@@ -18,7 +20,7 @@ defmodule ImageHub.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :phone_number, :name, :avatar_url, :password])
+    |> cast(attrs, [:email, :phone_number, :name, :avatar_url, :password, :auth_id, :auth_provider])
     |> validate_required([:email, :password])
     |> put_password_hash()
   end

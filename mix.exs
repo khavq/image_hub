@@ -20,7 +20,12 @@ defmodule ImageHub.MixProject do
   def application do
     [
       mod: {ImageHub.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :ueberauth,
+        :ueberauth_google,
+      ]
     ]
   end
 
@@ -45,6 +50,9 @@ defmodule ImageHub.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:guardian, "~> 1.2"},
       {:argon2_elixir, "~> 2.0"},
+      {:ueberauth, "~> 0.6"},
+      {:oauth2, "~> 2.0", override: true},
+      {:ueberauth_google, "~> 0.8"},
     ]
   end
 
