@@ -7,6 +7,9 @@
 # General application configuration
 use Mix.Config
 
+config :image_hub,
+  documents_upload_directory: System.get_env("DOCUMENTS_UPLOADS_DIRECTORY")
+
 config :ueberauth, Ueberauth,
   providers: [ google: {Ueberauth.Strategy.Google, []} ]
 

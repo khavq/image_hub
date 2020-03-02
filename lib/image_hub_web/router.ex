@@ -47,6 +47,7 @@ defmodule ImageHubWeb.Router do
 
     get "/protected", PageController, :protected
     resources "/users", UserController
+    resources "/uploads", UploadController
   end
 
   # Other scopes may use custom stacks.
