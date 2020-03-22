@@ -19,8 +19,7 @@ defmodule UserFromAuth do
 
   def find_or_create(%Auth{} = auth) do
     info = basic_info(auth)
-    IO.inspect(info, label: "iiiii")
-    user = Repo.get_by(User, auth_id: info[:auth_id], auth_provider: info[:auth_provider])
+    user = Repo.get_by(User, email: info[:email])
     if user do
       {:ok, user}
     else

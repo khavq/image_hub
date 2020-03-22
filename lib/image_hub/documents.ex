@@ -55,8 +55,9 @@ defmodule ImageHub.Documents do
     |> Repo.insert()
   end
 
-  def create_upload_from_plug_upload( \
+  def create_upload_from_plug_upload(file =\
     %Plug.Upload{filename: filename, path: tmp_path, content_type: content_type }) do
+      IO.inspect(file, label: "fffffff")
       hash = File.stream!(tmp_path, [], 2048) |> Upload.sha256()
       with {:ok, %File.Stat{size: size}} <- File.stat(tmp_path),
            {:ok, upload} <-

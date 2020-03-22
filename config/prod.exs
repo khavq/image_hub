@@ -59,3 +59,9 @@ config :image_hub, ImageHubWeb.Endpoint, server: true
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
 #import_config "prod.secret.exs"
+https: [
+  port: 4000,
+  cipher_suite: :strong,
+  certfile: "priv/cert/selfsigned.pem",
+  keyfile: "priv/cert/selfsigned_key.pem"
+]
