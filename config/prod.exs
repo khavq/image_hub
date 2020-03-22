@@ -1,5 +1,9 @@
 use Mix.Config
 
+config :arc,
+  storage: Arc.Storage.S3,
+  bucket: {:system, "S3_BUCKET"}
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.

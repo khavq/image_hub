@@ -1,5 +1,9 @@
 use Mix.Config
 
+config :arc,
+  storage: Arc.Storage.Local,
+  storage_dir: "uploads/arc"
+
 # Configure your database
 config :image_hub, ImageHub.Repo,
   username: "postgres",

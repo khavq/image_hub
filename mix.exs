@@ -53,6 +53,13 @@ defmodule ImageHub.MixProject do
       {:ueberauth, "~> 0.6"},
       {:oauth2, "~> 2.0", override: true},
       {:ueberauth_google, "~> 0.8"},
+      {:arc, "~> 0.11.0"},
+      {:ex_aws, "~> 2.0" },
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.6"},
+      {:poison, "~> 3.1"},
+      {:sweet_xml, "~> 0.6"},
+      {:arc_ecto, "~> 0.11.3"},
     ]
   end
 
