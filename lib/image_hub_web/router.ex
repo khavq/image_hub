@@ -40,6 +40,8 @@ defmodule ImageHubWeb.Router do
     get  "/login",  SessionController, :new
     get  "/logout", SessionController, :logout
     post "/login",  SessionController, :login
+    get "/sign_up", UserController, :new
+    post "/users", UserController, :create
   end
 
   scope "/", ImageHubWeb do
@@ -48,6 +50,7 @@ defmodule ImageHubWeb.Router do
     get "/protected", PageController, :protected
     resources "/users", UserController
     resources "/uploads", UploadController
+    resources "/videos", VideoController
   end
 
   # Other scopes may use custom stacks.

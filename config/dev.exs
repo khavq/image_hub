@@ -6,10 +6,10 @@ config :arc,
 
 # Configure your database
 config :image_hub, ImageHub.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "image_hub_dev",
-  hostname: "localhost",
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASSWORD"),
+  database: System.get_env("DB_NAME"),
+  hostname: System.get_env("DB_HOST"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -21,7 +21,7 @@ config :image_hub, ImageHub.Repo,
 # with webpack to recompile .js and .css sources.
 config :image_hub, ImageHubWeb.Endpoint,
   https: [
-    port: 4000,
+    port: System.get_env("APP_PORT"),
     cipher_suite: :strong,
     certfile: "priv/cert/selfsigned.pem",
     keyfile: "priv/cert/selfsigned_key.pem"

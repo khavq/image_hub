@@ -19,6 +19,7 @@ defmodule ImageHubWeb.UserController do
       {:ok, user} ->
         conn
         |> put_flash(:info, "User created successfully.")
+        |> ImageHub.Accounts.Guardian.Plug.sign_in(user)
         |> redirect(to: Routes.user_path(conn, :show, user))
 
       {:error, %Ecto.Changeset{} = changeset} ->
