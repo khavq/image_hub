@@ -29,7 +29,7 @@ defmodule ImageHub.Multimedia do
   end
 
   def list_videos do
-    Repo.all(Video)
+    Repo.all(from v in Video, preload: [:user])
   end
 
   def get_video!(id), do: Repo.get!(Video, id)
