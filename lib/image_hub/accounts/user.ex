@@ -1,7 +1,6 @@
 defmodule ImageHub.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Accounts.Credential
   alias Argon2
 
   schema "users" do
@@ -12,7 +11,7 @@ defmodule ImageHub.Accounts.User do
     field :password, :string
     field :auth_id, :string
     field :auth_provider, :string
-    has_one :credential, Credential
+    has_many :videos, ImageHub.Multimedia.Video
 
     timestamps()
   end
