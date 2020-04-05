@@ -3,7 +3,24 @@ defmodule ImageHub.Multimedia do
   alias ImageHub.Repo
   alias ImageHub.Multimedia.Video
   alias ImageHub.Multimedia.Category
+  alias ImageHub.Multimedia.Annotation
   alias ImageHub.Accounts.User
+
+  def annotation_video(%User{id: user_id}, video_id, attrs) do
+    %Annotation{user_id: user_id, video_id: video_id}
+    |> Annotation.changeset(attrs)
+    |> Repo.insert
+  end
+
+  def list_annotations(%Video{} = video, since_id \\ 0) do
+    Repo.all(
+      from a in Ecto.assoc(video, :annotations),
+      where: a.id > ^since_id,
+      order_by: [asc: a.at, asc: a.id],
+      limit: 500,
+      preload: [:user]
+    )
+  end
 
   def list_alphabetical_categories, do: \
     Category |> Category.alphabetical |> Repo.all

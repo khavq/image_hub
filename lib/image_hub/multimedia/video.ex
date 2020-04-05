@@ -11,6 +11,7 @@ defmodule ImageHub.Multimedia.Video do
 
     belongs_to :user, ImageHub.Accounts.User
     belongs_to :category, ImageHub.Multimedia.Category
+    has_many :annotations, ImageHub.Multimedia.Annotation
 
     timestamps()
   end

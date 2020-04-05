@@ -1,20 +1,47 @@
 defmodule ImageHubWeb.VideoChannel do
   use ImageHubWeb, :channel
+  alias ImageHub.Multimedia
 
-  def join("videos:" <> video_id, _params, socket) do
-    IO.inspect(video_id, lable: "video_id")
-    #{:ok, assign(socket, :video_id, String.to_integer(video_id))}
-    :timer.send_interval(5_000, :ping)
-    {:ok, socket}
+  def join("videos:" <> video_id, params, socket) do
+    send(self(), :after_join)
+    last_seen_id = params["last_seen_id"] || 0
+    video_id = String.to_integer(video_id)
+    annotations =
+      Multimedia.get_video!(video_id)
+      |> Multimedia.list_annotations(last_seen_id)
+      |> Phoenix.View.render_many(ImageHubWeb.AnnotationView, "annotation.json")
+
+    {:ok, %{annotations: annotations}, assign(socket, :video_id, video_id)}
   end
 
-  def handle_in("new_annotation", params, socket) do
+  def handle_in(event, params, socket) do
     user = current_user(socket.assigns[:current_user])
-    broadcast!(socket, "new_annotation", %{
-      user: %{username: user.email},
-      body: params["body"],
-      at: params["at"]
-    })
+    handle_in(event, params, user, socket)
+  end
+
+  def handle_info(:after_join, socket) do
+    push(socket, "presence_state", ImageHubWeb.Presence.list(socket))
+    {:ok, _} = ImageHubWeb.Presence.track(
+      socket,
+      socket.assigns.current_user,
+      %{device: "browser"})
+
+    {:noreply, socket}
+  end
+
+  def handle_in("new_annotation", params, user, socket) do
+    case ImageHub.Multimedia.annotation_video(user, socket.assigns.video_id, params) do
+      {:ok, annotation} ->
+        broadcast!(socket, "new_annotation", %{
+          id: annotation.id,
+          user: ImageHubWeb.UserView.render("user.json", %{user: user}),
+          body: annotation.body,
+          at: annotation.at
+        })
+        {:reply, :ok, socket}
+      {:error, changeset} ->
+        {:reply, {:error, %{error: changeset}}, socket}
+    end
 
     {:reply, :ok, socket}
   end

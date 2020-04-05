@@ -5,8 +5,8 @@ defmodule ImageHub.Multimedia.Annotation do
   schema "annotations" do
     field :at, :integer
     field :body, :string
-    field :user_id, :id
-    field :video_id, :id
+    belongs_to :user, ImageHub.Accounts.User
+    belongs_to :video, ImageHub.Multimedia.Video
 
     timestamps()
   end

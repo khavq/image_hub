@@ -11,9 +11,10 @@ defmodule ImageHub.Application do
       # Start the Ecto repository
       ImageHub.Repo,
       # Start the endpoint when the application starts
-      ImageHubWeb.Endpoint
+      ImageHubWeb.Endpoint,
       # Starts a worker by calling: ImageHub.Worker.start_link(arg)
       # {ImageHub.Worker, arg},
+      ImageHubWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
